@@ -18,7 +18,6 @@ class WeatherModel(Base):
     wind_direction = Column(Enum(WindDirectionEnum), nullable=False)
     last_updated = Column(Date, index=True, nullable=False)
     sunrise = Column(Time, nullable=False)
-    is_good_to_go_out = Column(Boolean, nullable=False)
 
     air_quality = relationship(
         "AirQuality",
@@ -44,5 +43,6 @@ class AirQuality(Base):
     air_quality_so2 = Column(Float, nullable=True)
     air_quality_pm2_5 = Column(Float, nullable=True)
     air_quality_pm10 = Column(Float, nullable=True)
+    is_good_to_go_out = Column(Boolean, nullable=False)
 
     weather = relationship("WeatherModel", back_populates="air_quality")
