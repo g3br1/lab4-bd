@@ -55,14 +55,14 @@ def import_csv_data(file_path: str):
                 wind_direction=wind_direction,
                 last_updated=last_updated,
                 sunrise=sunrise,
-                is_good_to_go_out=is_good,
                 air_quality=AirQuality(
                     air_quality_co=float(row.get('air_quality_Carbon_Monoxide', 0)) if pd.notna(row.get('air_quality_Carbon_Monoxide')) else None,
                     air_quality_no2=float(row.get('air_quality_Nitrogen_dioxide', 0)) if pd.notna(row.get('air_quality_Nitrogen_dioxide')) else None,
                     air_quality_o3=float(row.get('air_quality_Ozone', 0)) if pd.notna(row.get('air_quality_Ozone')) else None,
                     air_quality_so2=float(row.get('air_quality_Sulphur_dioxide', 0)) if pd.notna(row.get('air_quality_Sulphur_dioxide')) else None,
                     air_quality_pm2_5=pm2_5,
-                    air_quality_pm10=float(row.get('air_quality_PM10', 0)) if pd.notna(row.get('air_quality_PM10')) else None
+                    air_quality_pm10=float(row.get('air_quality_PM10', 0)) if pd.notna(row.get('air_quality_PM10')) else None,
+                    is_good_to_go_out=is_good
                 )
             )
             db.add(weather_record)

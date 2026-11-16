@@ -4,7 +4,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL", 
-    "postgresql+psycopg2://postgres:g3br1@localhost:5432/weather_db"
+    "mysql+pymysql://root:1234@localhost:3306/weather_db_mysql"
 )
 
 engine = create_engine(DATABASE_URL, echo=False)
