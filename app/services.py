@@ -1,7 +1,8 @@
 import pandas as pd
 from datetime import datetime
 from app.database import SessionLocal
-from app.models import WeatherModel, WindDirectionEnum
+from app.models import WeatherModel, AirQuality, WindDirectionEnum
+from tqdm import tqdm
 
 def calculate_is_good_to_go(pm2_5: float) -> bool:
     if pd.isna(pm2_5):
@@ -15,7 +16,7 @@ def import_csv_data(file_path: str):
     
     try:
         count = 0
-        for _, row in df.iterrows():
+        for _, row in tqdm(df.iterrows(), total=len(df), desc="Імпорт у БД", unit=" запис"):
             last_updated = None
             last_updated_val = row.get('last_updated')
             if pd.notna(last_updated_val):
@@ -54,13 +55,15 @@ def import_csv_data(file_path: str):
                 wind_direction=wind_direction,
                 last_updated=last_updated,
                 sunrise=sunrise,
-                air_quality_co=float(row.get('air_quality_Carbon_Monoxide', 0)) if pd.notna(row.get('air_quality_Carbon_Monoxide')) else None,
-                air_quality_no2=float(row.get('air_quality_Nitrogen_dioxide', 0)) if pd.notna(row.get('air_quality_Nitrogen_dioxide')) else None,
-                air_quality_o3=float(row.get('air_quality_Ozone', 0)) if pd.notna(row.get('air_quality_Ozone')) else None,
-                air_quality_so2=float(row.get('air_quality_Sulphur_dioxide', 0)) if pd.notna(row.get('air_quality_Sulphur_dioxide')) else None,
-                air_quality_pm2_5=pm2_5,
-                air_quality_pm10=float(row.get('air_quality_PM10', 0)) if pd.notna(row.get('air_quality_PM10')) else None,
-                is_good_to_go_out=is_good
+                is_good_to_go_out=is_good,
+                air_quality=AirQuality(
+                    air_quality_co=float(row.get('air_quality_Carbon_Monoxide', 0)) if pd.notna(row.get('air_quality_Carbon_Monoxide')) else None,
+                    air_quality_no2=float(row.get('air_quality_Nitrogen_dioxide', 0)) if pd.notna(row.get('air_quality_Nitrogen_dioxide')) else None,
+                    air_quality_o3=float(row.get('air_quality_Ozone', 0)) if pd.notna(row.get('air_quality_Ozone')) else None,
+                    air_quality_so2=float(row.get('air_quality_Sulphur_dioxide', 0)) if pd.notna(row.get('air_quality_Sulphur_dioxide')) else None,
+                    air_quality_pm2_5=pm2_5,
+                    air_quality_pm10=float(row.get('air_quality_PM10', 0)) if pd.notna(row.get('air_quality_PM10')) else None
+                )
             )
             db.add(weather_record)
             count += 1

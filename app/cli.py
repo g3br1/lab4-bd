@@ -1,6 +1,7 @@
 from datetime import datetime
 from app.database import SessionLocal
 from app.models import WeatherModel
+from sqlalchemy.orm import joinedload
 
 def search_weather():
     db = SessionLocal()
@@ -23,12 +24,15 @@ def search_weather():
     else:
         print(f"\nЗнайдено записів: {len(results)}")
         for r in results:
-            print("-" * 40)
-            print(f"Країна: {r.country}, Дата: {r.last_updated}")
-            print(f"Вітер: {r.wind_kph} км/год ({r.wind_direction}), градусів: {r.wind_degree}°")
-            print(f"Стан повітря -> PM2.5: {r.air_quality_pm2_5}, PM10: {r.air_quality_pm10}")
-            recommendation = "ТАК" if r.is_good_to_go_out else "НІ"
-            print(f"Чи варто виходити на вулицю: {recommendation}")
-            print("-" * 40)
+                print("-" * 40)
+                print(f"Країна: {r.country}, Дата: {r.last_updated}")
+                print(f"Вітер: {r.wind_kph} км/год ({r.wind_direction.value}), градусів: {r.wind_degree}°")
+                if r.air_quality:
+                    print(f"Стан повітря -> PM2.5: {r.air_quality.air_quality_pm2_5}, PM10: {r.air_quality.air_quality_pm10}")
+                else:
+                    print("Стан повітря -> дані відсутні")
+                recommendation = "ТАК" if r.is_good_to_go_out else "НІ"
+                print(f"Чи варто виходити на вулицю: {recommendation}")
+                print("-" * 40)
 
     db.close()
